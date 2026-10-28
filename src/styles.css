@@ -87,6 +87,7 @@ button, input { font: inherit; }
   .preview-section, .preview-canvas, .preview-viewport { display: block !important; width: auto !important; max-width: none !important; height: auto !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; border: 0 !important; background: transparent !important; overflow: visible !important; }
   .paper { transform: none !important; box-shadow: none !important; overflow: visible !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
   .paper--a4 { width: 210mm !important; height: 297mm !important; }
+  .paper--58 { width: var(--print-paper-width) !important; }
   .paper--thermal { break-after: avoid; page-break-after: avoid; }
   .ticket-image { break-inside: avoid !important; page-break-inside: avoid !important; }
 }

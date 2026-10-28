@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
 import originalTicket from '../QRSorteodemototicket.png'
 import greenLogo from '../logo-la-tijera-verde.png'
 
@@ -73,6 +73,8 @@ export default function App() {
   const isA4 = format === 'a4'
   const imageWidthMm = imageWidthsMm[format]
   const paperWidthMm = isA4 ? a4WidthMm : Number(format)
+  // Some 58 mm drivers expose the 48 mm printable area as the paper form.
+  const printPaperWidthMm = format === '58' ? imageWidthMm : paperWidthMm
   const paperHeightMm = isA4 ? a4HeightMm : Math.max(1, Math.ceil(imageHeightMm + 2.5))
   const columns = Math.floor((a4WidthMm - 2 * a4PaddingMm + a4GapMm) / (imageWidthsMm.a4 + a4GapMm))
   const rows = imageHeightMm > 0
@@ -80,7 +82,7 @@ export default function App() {
     : 0
   const copies = columns * rows
   const scale = Math.min(isA4 ? 1 : 1.8, Math.max(0.1, (previewWidth - 48) / (paperWidthMm * pxPerMm)))
-  const printPageSize = isA4 ? 'A4' : `${paperWidthMm}mm ${paperHeightMm}mm`
+  const printPageSize = isA4 ? 'A4' : `${printPaperWidthMm}mm ${paperHeightMm}mm`
   const ready = imageState === 'ready' && imageHeightMm > 0 && (!isA4 || copies > 0)
   const selectedFormat = formats.find((item) => item.value === format)!
 
@@ -140,8 +142,8 @@ export default function App() {
             {imageState === 'loading' && <p className="preview-status">Cargando PNG original…</p>}
             {ready && <div className="preview-viewport" style={{ width: paperWidthMm * pxPerMm * scale, height: paperHeightMm * pxPerMm * scale }}>
               <div
-                className={`paper ${isA4 ? 'paper--a4' : 'paper--thermal'}`}
-                style={{ width: `${paperWidthMm}mm`, height: `${paperHeightMm}mm`, transform: `scale(${scale})` }}
+                className={`paper ${isA4 ? 'paper--a4' : 'paper--thermal'}${format === '58' ? ' paper--58' : ''}`}
+                style={{ width: `${paperWidthMm}mm`, height: `${paperHeightMm}mm`, transform: `scale(${scale})`, '--print-paper-width': `${printPaperWidthMm}mm` } as CSSProperties}
               >
                 {isA4 ? (
                   <div className="a4-grid" style={{ gridTemplateColumns: `repeat(${columns}, ${imageWidthsMm.a4}mm)`, gap: `${a4GapMm}mm` }}>
