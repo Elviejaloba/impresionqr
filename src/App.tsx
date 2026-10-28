@@ -9,41 +9,33 @@ const formats: { value: Format; label: string; detail: string }[] = [
   { value: '58', label: 'Comandera 58 mm', detail: 'Un ticket por tira' },
 ]
 
-const testQrValue = 'LA-TIJERA|TICKET-DE-PRUEBA|NO-VALIDO|2026-10-28'
-const logoUrl = import.meta.env.VITE_BRAND_LOGO_URL as string | undefined
 const a4Width = 210
 const a4Height = 297
 const a4Padding = 4
 const a4TicketWidth = 58
 
-function Brand({ ticket = false }: { ticket?: boolean }) {
-  const [failed, setFailed] = useState(false)
+function Brand({ ticket = false, format = 'a4' }: { ticket?: boolean; format?: Format }) {
+  const logoSrc = format === 'a4'
+    ? '/brand/logo-la-tijera-verde.png'
+    : '/brand/logo-la-tijera-termico-bn.png'
   return (
     <span className={ticket ? 'ticket-brand' : 'app-brand'}>
-      {logoUrl && !failed && (
-        <img
-          className="brand-logo"
-          src={logoUrl}
-          alt="La Tijera"
-          onError={() => setFailed(true)}
-        />
-      )}
-      {(!logoUrl || failed) && <span className="brand-fallback">La Tijera</span>}
+      <img className="brand-logo" src={logoSrc} alt="La Tijera" />
     </span>
   )
 }
 
-function Ticket({ format }: { format: Format }) {
+function Ticket({ format, qrValue }: { format: Format; qrValue?: string }) {
+  const printableQr = qrValue?.trim()
   return (
-    <article className={`ticket ticket--${format}`} aria-label="Ticket promocional de prueba">
-      <Brand ticket />
+    <article className={`ticket ticket--${format}`} aria-label="Ticket promocional">
+      <Brand ticket format={format} />
       <div className="ticket-rule" />
       <strong className="ticket-title">TICKET PROMOCIONAL</strong>
       <p className="ticket-offer">Compras superiores a <strong>$45.000</strong></p>
-      <div className="ticket-qr">
-        <QRCodeSVG value={testQrValue} size={160} marginSize={4} level="M" title="Código QR de prueba sin validez" />
-      </div>
-      <p className="ticket-test">QR DE PRUEBA<br />SIN VALIDEZ PROMOCIONAL</p>
+      {printableQr && <div className="ticket-qr">
+        <QRCodeSVG value={printableQr} size={160} marginSize={4} level="M" title="Código QR promocional" />
+      </div>}
     </article>
   )
 }
@@ -88,7 +80,7 @@ export default function App() {
   const paperHeight = isA4 ? a4Height : Math.max(thermalPageHeight, 1)
   const columns = Math.floor((a4Width - 2 * a4Padding) / a4TicketWidth)
   const rows = ticketHeightMm > 0
-    ? Math.max(0, Math.floor((a4Height - 2 * a4Padding - 0.5) / ticketHeightMm))
+    ? Math.min(4, Math.max(0, Math.floor((a4Height - 2 * a4Padding - 0.5) / ticketHeightMm)))
     : 0
   const ticketCount = columns * rows
   const scale = Math.min(1, Math.max(0.1, (previewWidth - 2) / (paperWidth * pxPerMm)))
@@ -132,7 +124,7 @@ export default function App() {
           <button type="button" disabled={!ticketHeightMm || (isA4 && ticketCount === 0)} onClick={() => window.print()}>
             IMPRIMIR TICKET <span aria-hidden="true">↗</span>
           </button>
-          <p>Se abrirá el diálogo de impresión de Windows.</p>
+          <p>Se abrirá el diálogo de impresión del navegador.</p>
         </div>
       </aside>
 

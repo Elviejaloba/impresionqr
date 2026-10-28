@@ -16,10 +16,8 @@ button, input { font: inherit; }
 .app-shell { display: grid; grid-template-columns: minmax(340px, 430px) minmax(0, 1fr); min-height: 100vh; }
 .controls { display: flex; flex-direction: column; padding: 48px clamp(28px, 4vw, 64px) 36px; border-right: 1px solid #dddcd6; }
 .controls-top { margin-bottom: 52px; }
-.app-brand { display: block; min-height: 38px; margin-bottom: 58px; }
-.app-brand .brand-logo { display: block; max-width: 175px; max-height: 45px; object-fit: contain; object-position: left center; }
-.brand-fallback { display: inline-block; font-family: Georgia, 'Times New Roman', serif; font-weight: 700; font-style: italic; letter-spacing: -.06em; }
-.app-brand .brand-fallback { font-size: 30px; }
+.app-brand { display: block; min-height: 76px; margin-bottom: 36px; }
+.app-brand .brand-logo { display: block; width: 76px; height: 76px; object-fit: contain; object-position: left center; }
 .eyebrow { display: block; font-size: 11px; font-weight: 800; letter-spacing: .17em; color: #6a7067; }
 h1 { margin: 17px 0 17px; font-size: clamp(31px, 3vw, 42px); line-height: 1.08; letter-spacing: -.055em; }
 .intro { margin: 0; max-width: 290px; color: #656963; font-size: 14px; line-height: 1.55; }
@@ -57,16 +55,15 @@ h1 { margin: 17px 0 17px; font-size: clamp(31px, 3vw, 42px); line-height: 1.08; 
 .measure-ruler { position: fixed; left: -10000px; top: 0; width: 100mm; height: 1px; visibility: hidden; pointer-events: none; }
 .measurement { position: fixed; left: -10000px; top: 0; width: max-content; visibility: hidden; pointer-events: none; }
 
-.ticket-slot { width: 58mm; border: .15mm dashed #bdbdbd; break-inside: avoid; page-break-inside: avoid; }
+.ticket-slot { display: flex; width: 58mm; min-height: 72mm; border: .15mm dashed #bdbdbd; break-inside: avoid; page-break-inside: avoid; }
 .ticket { display: flex; flex-direction: column; align-items: center; width: 100%; min-width: 0; background: #fff; color: #000; text-align: center; break-inside: avoid; page-break-inside: avoid; font-family: Arial, Helvetica, sans-serif; }
-.ticket--a4 { width: 57.7mm; padding: 2mm 2.5mm 1.5mm; }
+.ticket--a4 { width: 57.7mm; padding: 2mm 2.5mm 1.5mm; justify-content: center; }
 .ticket--80 { width: 80mm; padding: 2.4mm calc((80mm - var(--usable-width-80)) / 2) 2.5mm; }
 .ticket--58 { width: 58mm; padding: 2.5mm calc((58mm - var(--usable-width-58)) / 2) 2.5mm; }
-.ticket-brand { display: flex; align-items: center; justify-content: center; width: 100%; height: 12mm; }
-.ticket--58 .ticket-brand { height: 10mm; }
-.ticket-brand .brand-logo { display: block; max-width: 75%; max-height: 100%; object-fit: contain; }
-.ticket-brand .brand-fallback { font-size: 24px; line-height: 1; }
-.ticket--58 .ticket-brand .brand-fallback { font-size: 20px; }
+.ticket-brand { display: flex; align-items: center; justify-content: center; width: 100%; height: 22mm; }
+.ticket--80 .ticket-brand { height: 27mm; }
+.ticket--58 .ticket-brand { height: 22mm; }
+.ticket-brand .brand-logo { display: block; max-width: 100%; max-height: 100%; object-fit: contain; }
 .ticket-rule { width: 100%; margin: 2mm 0 3mm; border-top: .35mm solid #000; }
 .ticket--58 .ticket-rule { margin: 1.4mm 0 2.3mm; }
 .ticket-title { font-size: 12pt; font-weight: 800; line-height: 1.13; letter-spacing: .015em; }
@@ -80,9 +77,6 @@ h1 { margin: 17px 0 17px; font-size: clamp(31px, 3vw, 42px); line-height: 1.08; 
 .ticket--80 .ticket-qr { width: 31mm; height: 31mm; }
 .ticket--58 .ticket-qr { width: 23mm; height: 23mm; }
 .ticket-qr svg { display: block; width: 100%; height: 100%; shape-rendering: crispEdges; }
-.ticket-test { margin: 2mm 0 0; font-size: 7pt; font-weight: 800; line-height: 1.18; letter-spacing: .025em; }
-.ticket--80 .ticket-test { font-size: 8pt; }
-.ticket--58 .ticket-test { margin-top: 1.5mm; font-size: 6.5pt; }
 
 @media (max-width: 850px) {
   .app-shell { display: block; }

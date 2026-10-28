@@ -1,5 +1,4 @@
-Colocar aquí el logotipo original con el nombre logo-la-tijera.svg.
-Después configurar VITE_BRAND_LOGO_URL=/brand/logo-la-tijera.svg en .env.local
-o como variable de compilación en Railway y volver a compilar.
-La aplicación muestra el nombre La Tijera en texto mientras no se configure.
-Se recomienda un SVG monocromático con trazos adecuados para impresión térmica.
+Archivos originales de La Tijera:
+- logo-la-tijera-verde.png: interfaz y tickets A4.
+- logo-la-tijera-termico-bn.png: tickets de 80 y 58 mm.
+- assets/referencia-ticket-original.png: referencia visual, no se imprime.

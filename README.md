@@ -13,25 +13,21 @@ Abrir `http://127.0.0.1:5188/`. Si el puerto está ocupado, elegir uno libre sin
 
 ## Formatos e impresión
 
-- **A4:** hoja de 210 × 297 mm con tickets de 58 mm, grilla calculada a partir de la altura real del ticket y líneas de corte.
+- **A4:** hoja de 210 × 297 mm con 12 tickets de 58 mm (3 columnas × 4 filas) y líneas de corte.
 - **80 mm:** un ticket por tira; ancho útil inicial de 76 mm.
 - **58 mm:** un ticket por tira; ancho útil inicial de 48 mm.
 
-La vista previa y la impresión usan el mismo componente. La altura de las tiras y las filas A4 se recalculan si cambia el contenido. El código QR contiene `LA-TIJERA|TICKET-DE-PRUEBA|NO-VALIDO|2026-10-28`, un valor de prueba sin validez promocional.
+La vista previa y la impresión usan el mismo componente. La altura de las tiras se calcula a partir del contenido; si un ticket A4 creciera demasiado, la distribución reduce filas antes que cortarlo. Actualmente no se imprime ningún QR. El componente acepta un valor QR cuando exista contenido promocional válido.
 
-Al imprimir, seleccionar la impresora y el papel correspondiente en Windows. Usar escala **100 %**, sin “Ajustar a página”, y desactivar encabezados y pies del navegador. El controlador de la impresora puede imponer márgenes o longitud de corte; comprobarlo con una prueba física. El formato de 58 mm requiere una impresora compatible con ese papel y no presupone compatibilidad de la 3nStar RPT008.
+El botón **IMPRIMIR TICKET** llama directamente a `window.print()`. No genera archivos ni abre PDF. Abrir la aplicación en Chrome o Edge de Windows y elegir en su diálogo una impresora instalada o compartida. Si aparece “Guardar como PDF”, cambiar el destino en el navegador; JavaScript no puede enumerar ni seleccionar impresoras.
+
+Seleccionar también el papel correspondiente en el controlador de Windows. Usar escala **100 %**, sin “Ajustar a página”, y desactivar encabezados y pies del navegador. El controlador puede imponer márgenes o longitud de corte; comprobarlo con una prueba física. El formato de 58 mm requiere una impresora y un controlador compatibles con ese papel. Un controlador que solo ofrezca 48 mm de ancho no coincide automáticamente con el formato de papel de 58 mm de la aplicación.
 
 Los anchos útiles se ajustan en `src/styles.css` mediante `--usable-width-80` y `--usable-width-58`; el cambio se refleja en la medición y en la vista previa. No hay controles de configuración en la interfaz.
 
-## Logotipo original
+## Logotipos originales
 
-El repositorio inicial no incluía el logotipo. La aplicación muestra “La Tijera” en texto hasta que se agregue el archivo original `public/brand/logo-la-tijera.svg`. Después, crear `.env.local` con:
-
-```text
-VITE_BRAND_LOGO_URL=/brand/logo-la-tijera.svg
-```
-
-Para Railway, establecer esa variable antes de compilar. No se incluye un logotipo inventado.
+La interfaz y los tickets A4 usan `public/brand/logo-la-tijera-verde.png`. Las dos comanderas usan `public/brand/logo-la-tijera-termico-bn.png`. `assets/referencia-ticket-original.png` se conserva como referencia visual, sin imprimirse. Los originales colocados en la raíz se conservan y están excluidos de Git para evitar duplicados.
 
 ## Build y Railway
 
