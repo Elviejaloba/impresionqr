@@ -1,49 +1,38 @@
 import { useLayoutEffect, useRef, useState } from 'react'
-import { QRCodeSVG } from 'qrcode.react'
+import originalTicket from '../QRSorteodemototicket.png'
 
 type Format = 'a4' | '80' | '58'
 
 const formats: { value: Format; label: string; detail: string }[] = [
-  { value: 'a4', label: 'A4', detail: 'Múltiples tickets' },
-  { value: '80', label: 'Comandera 80 mm', detail: 'Un ticket por tira' },
-  { value: '58', label: 'Comandera 58 mm', detail: 'Un ticket por tira' },
+  { value: 'a4', label: 'A4', detail: 'Múltiples copias' },
+  { value: '80', label: 'Comandera 80 mm', detail: 'Una copia por tira' },
+  { value: '58', label: 'Comandera 58 mm', detail: 'Una copia por tira' },
 ]
 
-const a4Width = 210
-const a4Height = 297
-const a4Padding = 4
-const a4TicketWidth = 58
+const a4WidthMm = 210
+const a4HeightMm = 297
+const a4PaddingMm = 4
+const a4GapMm = 2
+const imageWidthsMm: Record<Format, number> = { a4: 58, '80': 76, '58': 48 }
 
-function Brand({ ticket = false, format = 'a4' }: { ticket?: boolean; format?: Format }) {
-  const logoSrc = format === 'a4'
-    ? '/brand/logo-la-tijera-verde.png'
-    : '/brand/logo-la-tijera-termico-bn.png'
+function TicketImage({ widthMm, onLoad, onError }: { widthMm: number; onLoad?: () => void; onError?: () => void }) {
   return (
-    <span className={ticket ? 'ticket-brand' : 'app-brand'}>
-      <img className="brand-logo" src={logoSrc} alt="La Tijera" />
-    </span>
-  )
-}
-
-function Ticket({ format, qrValue }: { format: Format; qrValue?: string }) {
-  const printableQr = qrValue?.trim()
-  return (
-    <article className={`ticket ticket--${format}`} aria-label="Ticket promocional">
-      <Brand ticket format={format} />
-      <div className="ticket-rule" />
-      <strong className="ticket-title">TICKET PROMOCIONAL</strong>
-      <p className="ticket-offer">Compras superiores a <strong>$45.000</strong></p>
-      {printableQr && <div className="ticket-qr">
-        <QRCodeSVG value={printableQr} size={160} marginSize={4} level="M" title="Código QR promocional" />
-      </div>}
-    </article>
+    <img
+      className="ticket-image"
+      src={originalTicket}
+      alt="Ticket original"
+      style={{ width: `${widthMm}mm` }}
+      onLoad={onLoad}
+      onError={onError}
+    />
   )
 }
 
 export default function App() {
   const [format, setFormat] = useState<Format>('a4')
+  const [imageState, setImageState] = useState<'loading' | 'ready' | 'error'>('loading')
   const [pxPerMm, setPxPerMm] = useState(96 / 25.4)
-  const [ticketHeightMm, setTicketHeightMm] = useState(0)
+  const [imageHeightMm, setImageHeightMm] = useState(0)
   const [previewWidth, setPreviewWidth] = useState(0)
   const measurementRef = useRef<HTMLDivElement>(null)
   const rulerRef = useRef<HTMLDivElement>(null)
@@ -55,7 +44,7 @@ export default function App() {
       const height = measurementRef.current?.getBoundingClientRect().height || 0
       if (calibration > 0 && height > 0) {
         setPxPerMm(calibration)
-        setTicketHeightMm(height / calibration)
+        setImageHeightMm(height / calibration)
       }
     }
     const observer = new ResizeObserver(measure)
@@ -75,38 +64,38 @@ export default function App() {
   }, [])
 
   const isA4 = format === 'a4'
-  const paperWidth = isA4 ? a4Width : Number(format)
-  const thermalPageHeight = Math.ceil(ticketHeightMm + 2.5)
-  const paperHeight = isA4 ? a4Height : Math.max(thermalPageHeight, 1)
-  const columns = Math.floor((a4Width - 2 * a4Padding) / a4TicketWidth)
-  const rows = ticketHeightMm > 0
-    ? Math.min(4, Math.max(0, Math.floor((a4Height - 2 * a4Padding - 0.5) / ticketHeightMm)))
+  const imageWidthMm = imageWidthsMm[format]
+  const paperWidthMm = isA4 ? a4WidthMm : Number(format)
+  const paperHeightMm = isA4 ? a4HeightMm : Math.max(1, Math.ceil(imageHeightMm + 2.5))
+  const columns = Math.floor((a4WidthMm - 2 * a4PaddingMm + a4GapMm) / (imageWidthsMm.a4 + a4GapMm))
+  const rows = imageHeightMm > 0
+    ? Math.max(0, Math.floor((a4HeightMm - 2 * a4PaddingMm - 0.5 + a4GapMm) / (imageHeightMm + a4GapMm)))
     : 0
-  const ticketCount = columns * rows
-  const scale = Math.min(1, Math.max(0.1, (previewWidth - 2) / (paperWidth * pxPerMm)))
-  const printPageSize = isA4 ? 'A4' : `${paperWidth}mm ${paperHeight}mm`
+  const copies = columns * rows
+  const scale = Math.min(1, Math.max(0.1, (previewWidth - 2) / (paperWidthMm * pxPerMm)))
+  const printPageSize = isA4 ? 'A4' : `${paperWidthMm}mm ${paperHeightMm}mm`
+  const ready = imageState === 'ready' && imageHeightMm > 0 && (!isA4 || copies > 0)
 
   return (
     <main className="app-shell">
       <style>{`@media print { @page { size: ${printPageSize}; margin: 0; } }`}</style>
       <div className="measure-ruler" ref={rulerRef} />
       <div className="measurement" key={format} ref={measurementRef}>
-        {isA4 ? <div className="ticket-slot"><Ticket format="a4" /></div> : <Ticket format={format} />}
+        <TicketImage widthMm={imageWidthMm} onLoad={() => setImageState('ready')} onError={() => setImageState('error')} />
       </div>
 
       <header className="print-toolbar">
-        <span className="toolbar-label">LA TIJERA <span>· TICKETS</span></span>
-        <button type="button" disabled={!ticketHeightMm || (isA4 && ticketCount === 0)} onClick={() => window.print()}>
+        <span className="toolbar-label">IMPRESIONQR</span>
+        <button type="button" disabled={!ready} onClick={() => window.print()}>
           IMPRIMIR TICKET <span aria-hidden="true">↗</span>
         </button>
       </header>
 
       <aside className="controls">
         <div className="controls-top">
-          <Brand />
-          <span className="eyebrow">IMPRESIÓN PROMOCIONAL</span>
+          <span className="eyebrow">IMPRESIONQR</span>
           <h1>Elegí el papel.<br />Imprimí el ticket.</h1>
-          <p className="intro">Seleccioná un formato y revisá la vista previa antes de imprimir.</p>
+          <p className="intro">Seleccioná un formato y revisá la vista previa del PNG original.</p>
         </div>
 
         <fieldset className="format-selector">
@@ -118,7 +107,7 @@ export default function App() {
                 name="format"
                 value={item.value}
                 checked={format === item.value}
-                onChange={() => { setTicketHeightMm(0); setFormat(item.value) }}
+                onChange={() => { setImageHeightMm(0); setFormat(item.value) }}
               />
               <span className="radio-mark" aria-hidden="true" />
               <span className="format-copy"><strong>{item.label}</strong><small>{item.detail}</small></span>
@@ -131,21 +120,23 @@ export default function App() {
       <section className="preview-section" aria-label="Vista previa de impresión">
         <div className="preview-heading">
           <div><span className="eyebrow">VISTA PREVIA</span><h2>{formats.find((item) => item.value === format)?.label}</h2></div>
-          <p>{isA4 ? `${ticketCount} tickets por hoja · ${columns} columnas × ${rows} filas` : `1 ticket · papel de ${paperWidth} mm`}</p>
+          <p>{isA4 ? `${copies} copias por hoja · ${columns} columnas × ${rows} filas` : `1 copia · papel de ${paperWidthMm} mm`}</p>
         </div>
         <div className="preview-canvas" ref={previewRef}>
-          <div className="preview-viewport" style={{ width: paperWidth * pxPerMm * scale, height: paperHeight * pxPerMm * scale }}>
+          {imageState === 'error' && <p className="preview-status">No se pudo cargar QRSorteodemototicket.png.</p>}
+          {imageState === 'loading' && <p className="preview-status">Cargando PNG original…</p>}
+          {ready && <div className="preview-viewport" style={{ width: paperWidthMm * pxPerMm * scale, height: paperHeightMm * pxPerMm * scale }}>
             <div
               className={`paper ${isA4 ? 'paper--a4' : 'paper--thermal'}`}
-              style={{ width: `${paperWidth}mm`, height: `${paperHeight}mm`, transform: `scale(${scale})` }}
+              style={{ width: `${paperWidthMm}mm`, height: `${paperHeightMm}mm`, transform: `scale(${scale})` }}
             >
               {isA4 ? (
-                <div className="a4-grid" style={{ gridTemplateColumns: `repeat(${columns}, ${a4TicketWidth}mm)` }}>
-                  {Array.from({ length: ticketCount }, (_, index) => <div className="ticket-slot" key={index}><Ticket format="a4" /></div>)}
+                <div className="a4-grid" style={{ gridTemplateColumns: `repeat(${columns}, ${imageWidthsMm.a4}mm)`, gap: `${a4GapMm}mm` }}>
+                  {Array.from({ length: copies }, (_, index) => <TicketImage widthMm={imageWidthsMm.a4} key={index} />)}
                 </div>
-              ) : <Ticket format={format} />}
+              ) : <TicketImage widthMm={imageWidthMm} />}
             </div>
-          </div>
+          </div>}
         </div>
         <p className="preview-note">Medidas físicas · Imprimí al 100 %, sin ajustar a página.</p>
       </section>
