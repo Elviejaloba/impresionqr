@@ -85,7 +85,7 @@ button, input { font: inherit; }
   .app-shell, .workspace { display: block !important; width: auto !important; max-width: none !important; min-height: 0 !important; height: auto !important; margin: 0 !important; padding: 0 !important; }
   .app-header, .controls, .print-action, .preview-heading, .preview-note, .preview-status, .measurement, .measure-ruler { display: none !important; }
   .preview-section, .preview-canvas, .preview-viewport { display: block !important; width: auto !important; max-width: none !important; height: auto !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; border: 0 !important; background: transparent !important; overflow: visible !important; }
-  .paper { transform: none !important; box-shadow: none !important; overflow: hidden !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .paper { transform: none !important; box-shadow: none !important; overflow: visible !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
   .paper--a4 { width: 210mm !important; height: 297mm !important; }
   .paper--thermal { break-after: avoid; page-break-after: avoid; }
   .ticket-image { break-inside: avoid !important; page-break-inside: avoid !important; }

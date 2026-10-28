@@ -13,7 +13,7 @@ Abrir `http://127.0.0.1:5188/`. Si el puerto está ocupado, elegir uno libre sin
 
 ## Formatos e impresión
 
-- **A4:** hoja de 210 × 297 mm; copias del PNG a 58 mm de ancho, con 4 mm de margen y 2 mm de separación. Filas, columnas y cantidad se calculan según la proporción real del archivo. Con el PNG actual entran 27 copias (3 × 9).
+- **A4:** hoja de 210 × 297 mm; 12 copias del PNG en 3 columnas × 4 filas, a 66 mm de ancho, con 4 mm de margen y 2 mm de separación. La altura de cada copia se obtiene de la proporción real del archivo y la cantidad de filas se limita a las que caben sin cortes.
 - **80 mm:** una copia del PNG por tira, con ancho útil inicial de 76 mm y altura proporcional.
 - **58 mm:** una copia del mismo PNG por tira, con ancho útil inicial de 48 mm y altura proporcional.
 

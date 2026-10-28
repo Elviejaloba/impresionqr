@@ -14,7 +14,13 @@ const a4WidthMm = 210
 const a4HeightMm = 297
 const a4PaddingMm = 4
 const a4GapMm = 2
-const imageWidthsMm: Record<Format, number> = { a4: 58, '80': 76, '58': 48 }
+const a4Columns = 3
+const a4MaxRows = 4
+const imageWidthsMm: Record<Format, number> = {
+  a4: (a4WidthMm - 2 * a4PaddingMm - (a4Columns - 1) * a4GapMm) / a4Columns,
+  '80': 76,
+  '58': 48,
+}
 
 function TicketImage({ widthMm, onLoad, onError }: { widthMm: number; onLoad?: () => void; onError?: () => void }) {
   return (
@@ -70,7 +76,7 @@ export default function App() {
   const paperHeightMm = isA4 ? a4HeightMm : Math.max(1, Math.ceil(imageHeightMm + 2.5))
   const columns = Math.floor((a4WidthMm - 2 * a4PaddingMm + a4GapMm) / (imageWidthsMm.a4 + a4GapMm))
   const rows = imageHeightMm > 0
-    ? Math.max(0, Math.floor((a4HeightMm - 2 * a4PaddingMm - 0.5 + a4GapMm) / (imageHeightMm + a4GapMm)))
+    ? Math.min(a4MaxRows, Math.max(0, Math.floor((a4HeightMm - 2 * a4PaddingMm - 0.5 + a4GapMm) / (imageHeightMm + a4GapMm))))
     : 0
   const copies = columns * rows
   const scale = Math.min(isA4 ? 1 : 1.8, Math.max(0.1, (previewWidth - 48) / (paperWidthMm * pxPerMm)))
