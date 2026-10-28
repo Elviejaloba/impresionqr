@@ -17,11 +17,11 @@ Abrir `http://127.0.0.1:5188/`. Si el puerto está ocupado, elegir uno libre sin
 - **80 mm:** una copia del PNG por tira, con ancho útil inicial de 76 mm y altura proporcional.
 - **58 mm:** una copia del mismo PNG por tira, con ancho útil inicial de 48 mm y altura proporcional.
 
-La vista previa y la impresión usan el mismo elemento `<img>` y el mismo archivo importado por Vite. No se generan códigos QR, textos, logotipos, líneas de corte ni otros elementos sobre el PNG. No se aplican filtros, recortes ni deformaciones. La altura de las tiras se calcula a partir de la imagen cargada.
+La vista previa y la impresión usan el mismo componente `<img>` y el mismo archivo importado por Vite. No se generan códigos QR, textos, logotipos, líneas de corte ni otros elementos sobre el PNG impreso. No se aplican filtros, recortes ni deformaciones. La altura de las tiras se calcula a partir de la imagen cargada.
 
 El botón **IMPRIMIR TICKET** llama directamente a `window.print()`. No genera archivos ni abre PDF. Abrir la aplicación en Chrome o Edge de Windows y elegir en su diálogo una impresora instalada o compartida. Si aparece “Guardar como PDF”, cambiar el destino en el navegador; JavaScript no puede enumerar ni seleccionar impresoras.
 
-El botón permanece en la barra superior al desplazarse y esa barra no se imprime. El formato del ticket se elige en la aplicación; la impresora se elige aparte, en el navegador de la PC que abrió la página. Railway solo entrega los archivos de la aplicación: no recibe trabajos de impresión ni necesita conocer impresoras.
+La interfaz muestra el logotipo verde original `logo-la-tijera-verde.png` en un encabezado compacto. Los controles y el botón están alineados a la izquierda; la vista previa, a la derecha en pantallas amplias. En móvil se apilan. El botón permanece visible al desplazarse y todos los controles, el encabezado y el logotipo de la interfaz se excluyen de la impresión. El formato del ticket se elige en la aplicación; la impresora se elige aparte, en el navegador de la PC que abrió la página. Railway solo entrega los archivos de la aplicación: no recibe trabajos de impresión ni necesita conocer impresoras.
 
 Seleccionar también el papel correspondiente en el controlador de Windows. Usar escala **100 %**, sin “Ajustar a página”, y desactivar encabezados y pies del navegador. El controlador puede imponer márgenes o longitud de corte; comprobarlo con una prueba física. El formato de 58 mm requiere una impresora y un controlador compatibles con ese papel. Un controlador que solo ofrezca 48 mm de ancho no coincide automáticamente con el formato de papel de 58 mm de la aplicación.
 
@@ -38,7 +38,7 @@ Los navegadores no permiten a una página web listar impresoras, imponer un dest
 
 ## Archivo original
 
-La única imagen usada es `C:\QR\QRSorteodemototicket.png` (575 × 288 px, RGBA). El archivo se importa sin modificarlo y forma parte del build para que funcione desde Railway. Su SHA-256 actual es `7994070FADAE259C4E5D425BFE9C27D67A3DCE570823F713FDB012214FEEB992`.
+La única imagen que se imprime es `C:\QR\QRSorteodemototicket.png` (575 × 288 px, RGBA). El archivo se importa sin modificarlo y forma parte del build para que funcione desde Railway. Su SHA-256 actual es `7994070FADAE259C4E5D425BFE9C27D67A3DCE570823F713FDB012214FEEB992`. El logotipo verde se usa solo en la interfaz.
 
 ## Build y Railway
 

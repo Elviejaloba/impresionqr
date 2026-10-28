@@ -3,7 +3,6 @@ dist/
 .playwright-cli/
 output/
 assets-impresionqr-la-tijera.zip
-/logo-la-tijera-verde.png
 /logo-la-tijera-termico-bn.png
 /referencia-ticket-original.png
 *.tsbuildinfo

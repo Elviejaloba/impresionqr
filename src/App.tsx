@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 import originalTicket from '../QRSorteodemototicket.png'
+import greenLogo from '../logo-la-tijera-verde.png'
 
 type Format = 'a4' | '80' | '58'
 
@@ -72,9 +73,10 @@ export default function App() {
     ? Math.max(0, Math.floor((a4HeightMm - 2 * a4PaddingMm - 0.5 + a4GapMm) / (imageHeightMm + a4GapMm)))
     : 0
   const copies = columns * rows
-  const scale = Math.min(1, Math.max(0.1, (previewWidth - 2) / (paperWidthMm * pxPerMm)))
+  const scale = Math.min(isA4 ? 1 : 1.8, Math.max(0.1, (previewWidth - 48) / (paperWidthMm * pxPerMm)))
   const printPageSize = isA4 ? 'A4' : `${paperWidthMm}mm ${paperHeightMm}mm`
   const ready = imageState === 'ready' && imageHeightMm > 0 && (!isA4 || copies > 0)
+  const selectedFormat = formats.find((item) => item.value === format)!
 
   return (
     <main className="app-shell">
@@ -84,62 +86,68 @@ export default function App() {
         <TicketImage widthMm={imageWidthMm} onLoad={() => setImageState('ready')} onError={() => setImageState('error')} />
       </div>
 
-      <header className="print-toolbar">
-        <span className="toolbar-label">IMPRESIONQR</span>
-        <button type="button" disabled={!ready} onClick={() => window.print()}>
-          IMPRIMIR TICKET <span aria-hidden="true">↗</span>
-        </button>
+      <header className="app-header">
+        <div className="header-inner">
+          <img className="header-logo" src={greenLogo} alt="La Tijera" />
+          <h1>Impresión de tickets</h1>
+        </div>
       </header>
 
-      <aside className="controls">
-        <div className="controls-top">
-          <span className="eyebrow">IMPRESIONQR</span>
-          <h1>Elegí el papel.<br />Imprimí el ticket.</h1>
-          <p className="intro">Seleccioná un formato y revisá la vista previa del PNG original.</p>
+      <div className="workspace">
+        <aside className="controls">
+          <h2>Formato de impresión</h2>
+          <fieldset className="format-selector">
+            <legend className="visually-hidden">Formato de impresión</legend>
+            {formats.map((item) => (
+              <label className={`format-option ${format === item.value ? 'is-selected' : ''}`} key={item.value}>
+                <input
+                  type="radio"
+                  name="format"
+                  value={item.value}
+                  checked={format === item.value}
+                  onChange={() => { setImageHeightMm(0); setFormat(item.value) }}
+                />
+                <span className="radio-mark" aria-hidden="true" />
+                <span className="format-copy"><strong>{item.label}</strong><small>{item.detail}</small></span>
+                <span className="format-size">{item.value === 'a4' ? '210 × 297' : `${item.value} mm`}</span>
+              </label>
+            ))}
+          </fieldset>
+        </aside>
+
+        <div className="print-action">
+          <button type="button" disabled={!ready} onClick={() => window.print()}>
+            IMPRIMIR TICKET <span aria-hidden="true">↗</span>
+          </button>
         </div>
 
-        <fieldset className="format-selector">
-          <legend>Formato de impresión</legend>
-          {formats.map((item) => (
-            <label className={`format-option ${format === item.value ? 'is-selected' : ''}`} key={item.value}>
-              <input
-                type="radio"
-                name="format"
-                value={item.value}
-                checked={format === item.value}
-                onChange={() => { setImageHeightMm(0); setFormat(item.value) }}
-              />
-              <span className="radio-mark" aria-hidden="true" />
-              <span className="format-copy"><strong>{item.label}</strong><small>{item.detail}</small></span>
-              <span className="format-size">{item.value === 'a4' ? '210 × 297' : `${item.value} mm`}</span>
-            </label>
-          ))}
-        </fieldset>
-      </aside>
-
-      <section className="preview-section" aria-label="Vista previa de impresión">
-        <div className="preview-heading">
-          <div><span className="eyebrow">VISTA PREVIA</span><h2>{formats.find((item) => item.value === format)?.label}</h2></div>
-          <p>{isA4 ? `${copies} copias por hoja · ${columns} columnas × ${rows} filas` : `1 copia · papel de ${paperWidthMm} mm`}</p>
-        </div>
-        <div className="preview-canvas" ref={previewRef}>
-          {imageState === 'error' && <p className="preview-status">No se pudo cargar QRSorteodemototicket.png.</p>}
-          {imageState === 'loading' && <p className="preview-status">Cargando PNG original…</p>}
-          {ready && <div className="preview-viewport" style={{ width: paperWidthMm * pxPerMm * scale, height: paperHeightMm * pxPerMm * scale }}>
-            <div
-              className={`paper ${isA4 ? 'paper--a4' : 'paper--thermal'}`}
-              style={{ width: `${paperWidthMm}mm`, height: `${paperHeightMm}mm`, transform: `scale(${scale})` }}
-            >
-              {isA4 ? (
-                <div className="a4-grid" style={{ gridTemplateColumns: `repeat(${columns}, ${imageWidthsMm.a4}mm)`, gap: `${a4GapMm}mm` }}>
-                  {Array.from({ length: copies }, (_, index) => <TicketImage widthMm={imageWidthsMm.a4} key={index} />)}
-                </div>
-              ) : <TicketImage widthMm={imageWidthMm} />}
+        <section className="preview-section" aria-label="Vista previa de impresión">
+          <div className="preview-heading">
+            <h2>Vista previa</h2>
+            <div className="preview-meta">
+              <strong>{selectedFormat.label}</strong>
+              <span>{isA4 ? `${copies} copias · ${columns} × ${rows}` : `1 copia · papel de ${paperWidthMm} mm`}</span>
             </div>
-          </div>}
-        </div>
-        <p className="preview-note">Medidas físicas · Imprimí al 100 %, sin ajustar a página.</p>
-      </section>
+          </div>
+          <div className={`preview-canvas ${isA4 ? 'preview-canvas--a4' : 'preview-canvas--thermal'}`} ref={previewRef}>
+            {imageState === 'error' && <p className="preview-status">No se pudo cargar QRSorteodemototicket.png.</p>}
+            {imageState === 'loading' && <p className="preview-status">Cargando PNG original…</p>}
+            {ready && <div className="preview-viewport" style={{ width: paperWidthMm * pxPerMm * scale, height: paperHeightMm * pxPerMm * scale }}>
+              <div
+                className={`paper ${isA4 ? 'paper--a4' : 'paper--thermal'}`}
+                style={{ width: `${paperWidthMm}mm`, height: `${paperHeightMm}mm`, transform: `scale(${scale})` }}
+              >
+                {isA4 ? (
+                  <div className="a4-grid" style={{ gridTemplateColumns: `repeat(${columns}, ${imageWidthsMm.a4}mm)`, gap: `${a4GapMm}mm` }}>
+                    {Array.from({ length: copies }, (_, index) => <TicketImage widthMm={imageWidthsMm.a4} key={index} />)}
+                  </div>
+                ) : <TicketImage widthMm={imageWidthMm} />}
+              </div>
+            </div>}
+          </div>
+          <p className="preview-note">Medidas físicas · Imprimí al 100 %, sin ajustar a página.</p>
+        </section>
+      </div>
     </main>
   )
 }
