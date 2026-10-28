@@ -14,6 +14,13 @@ body { margin: 0; min-width: 320px; }
 button, input { font: inherit; }
 
 .app-shell { display: grid; grid-template-columns: minmax(340px, 430px) minmax(0, 1fr); min-height: 100vh; }
+.print-toolbar { position: sticky; top: 0; z-index: 100; grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 68px; padding: 10px clamp(24px, 4vw, 64px); border-bottom: 1px solid #d7d9d1; background: #f4f2ed; }
+.toolbar-label { color: #263128; font-size: 12px; font-weight: 800; letter-spacing: .1em; white-space: nowrap; }
+.print-toolbar button { display: flex; align-items: center; justify-content: space-between; gap: 16px; width: 225px; height: 46px; padding: 0 17px; border: 0; border-radius: 2px; background: #263128; color: white; font-size: 11px; font-weight: 800; letter-spacing: .1em; white-space: nowrap; cursor: pointer; transition: background .18s ease; }
+.print-toolbar button:hover:not(:disabled) { background: #3a4a3d; }
+.print-toolbar button:focus-visible { outline: 2px solid #263128; outline-offset: 3px; }
+.print-toolbar button:disabled { opacity: .48; cursor: wait; }
+.print-toolbar button span { font-size: 20px; font-weight: 400; line-height: 1; }
 .controls { display: flex; flex-direction: column; padding: 48px clamp(28px, 4vw, 64px) 36px; border-right: 1px solid #dddcd6; }
 .controls-top { margin-bottom: 52px; }
 .app-brand { display: block; min-height: 76px; margin-bottom: 36px; }
@@ -34,13 +41,6 @@ h1 { margin: 17px 0 17px; font-size: clamp(31px, 3vw, 42px); line-height: 1.08; 
 .format-copy strong { font-size: 14px; font-weight: 700; }
 .format-copy small { color: #777c73; font-size: 12px; }
 .format-size { margin-left: auto; color: #777c73; font-size: 11px; white-space: nowrap; }
-.action-area { margin-top: auto; padding-top: 38px; }
-.action-area button { display: flex; align-items: center; justify-content: space-between; width: 100%; height: 58px; padding: 0 20px; border: 0; border-radius: 2px; background: #263128; color: white; font-size: 12px; font-weight: 800; letter-spacing: .11em; cursor: pointer; transition: background .18s ease, transform .18s ease; }
-.action-area button:hover:not(:disabled) { background: #3a4a3d; transform: translateY(-2px); }
-.action-area button:disabled { opacity: .48; cursor: wait; }
-.action-area button span { font-size: 20px; font-weight: 400; line-height: 1; }
-.action-area p { margin: 11px 0 0; color: #777c73; font-size: 11px; }
-
 .preview-section { min-width: 0; padding: 43px clamp(25px, 4vw, 68px) 22px; }
 .preview-heading { display: flex; align-items: end; justify-content: space-between; gap: 20px; max-width: 900px; margin: 0 auto 24px; }
 .preview-heading h2 { margin: 8px 0 0; font-size: 25px; letter-spacing: -.04em; }
@@ -80,24 +80,31 @@ h1 { margin: 17px 0 17px; font-size: clamp(31px, 3vw, 42px); line-height: 1.08; 
 
 @media (max-width: 850px) {
   .app-shell { display: block; }
+  .print-toolbar { min-height: 62px; padding: 8px 24px; }
+  .print-toolbar button { width: 190px; height: 44px; padding: 0 13px; font-size: 10px; }
   .controls { padding: 29px 24px 30px; border-right: 0; border-bottom: 1px solid #dddcd6; }
   .controls-top { margin-bottom: 30px; }
   .app-brand { margin-bottom: 31px; }
-  .action-area { padding-top: 24px; }
   .preview-section { padding: 30px 24px 24px; }
 }
 
 @media (max-width: 480px) {
+  .toolbar-label span { display: none; }
   .preview-heading { display: block; }
   .preview-heading p { margin-top: 9px; text-align: left; }
   .preview-canvas { padding: 18px 0; min-height: 270px; }
   .format-size { font-size: 10px; }
 }
 
+@media (max-width: 360px) {
+  .toolbar-label { display: none; }
+  .print-toolbar { justify-content: flex-end; padding-inline: 18px; }
+}
+
 @media print {
   :root, body { width: auto; min-width: 0; margin: 0 !important; padding: 0 !important; background: #fff !important; }
   .app-shell { display: block !important; width: auto; min-height: 0; margin: 0; padding: 0; }
-  .controls, .preview-heading, .preview-note, .measurement, .measure-ruler { display: none !important; }
+  .print-toolbar, .controls, .preview-heading, .preview-note, .measurement, .measure-ruler { display: none !important; }
   .preview-section, .preview-canvas, .preview-viewport { display: block !important; width: auto !important; height: auto !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; border: 0 !important; background: transparent !important; overflow: visible !important; }
   .paper { transform: none !important; box-shadow: none !important; overflow: hidden !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
   .paper--a4 { width: 210mm !important; height: 297mm !important; }

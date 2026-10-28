@@ -94,6 +94,13 @@ export default function App() {
         {isA4 ? <div className="ticket-slot"><Ticket format="a4" /></div> : <Ticket format={format} />}
       </div>
 
+      <header className="print-toolbar">
+        <span className="toolbar-label">LA TIJERA <span>· TICKETS</span></span>
+        <button type="button" disabled={!ticketHeightMm || (isA4 && ticketCount === 0)} onClick={() => window.print()}>
+          IMPRIMIR TICKET <span aria-hidden="true">↗</span>
+        </button>
+      </header>
+
       <aside className="controls">
         <div className="controls-top">
           <Brand />
@@ -119,13 +126,6 @@ export default function App() {
             </label>
           ))}
         </fieldset>
-
-        <div className="action-area">
-          <button type="button" disabled={!ticketHeightMm || (isA4 && ticketCount === 0)} onClick={() => window.print()}>
-            IMPRIMIR TICKET <span aria-hidden="true">↗</span>
-          </button>
-          <p>Se abrirá el diálogo de impresión del navegador.</p>
-        </div>
       </aside>
 
       <section className="preview-section" aria-label="Vista previa de impresión">
