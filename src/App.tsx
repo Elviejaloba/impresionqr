@@ -75,7 +75,8 @@ export default function App() {
   const paperWidthMm = isA4 ? a4WidthMm : Number(format)
   // Some 58 mm drivers expose the 48 mm printable area as the paper form.
   const printPaperWidthMm = format === '58' ? imageWidthMm : paperWidthMm
-  const paperHeightMm = isA4 ? a4HeightMm : Math.max(1, Math.ceil(imageHeightMm + 2.5))
+  // A roll page shorter than its width is treated as landscape by print dialogs.
+  const paperHeightMm = isA4 ? a4HeightMm : Math.ceil(Math.max(imageHeightMm + 2.5, printPaperWidthMm + 1))
   const columns = Math.floor((a4WidthMm - 2 * a4PaddingMm + a4GapMm) / (imageWidthsMm.a4 + a4GapMm))
   const rows = imageHeightMm > 0
     ? Math.min(a4MaxRows, Math.max(0, Math.floor((a4HeightMm - 2 * a4PaddingMm - 0.5 + a4GapMm) / (imageHeightMm + a4GapMm))))
