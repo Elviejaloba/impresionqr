@@ -75,8 +75,8 @@ export default function App() {
   const paperWidthMm = isA4 ? a4WidthMm : Number(format)
   // Some 58 mm drivers expose the 48 mm printable area as the paper form.
   const printPaperWidthMm = format === '58' ? imageWidthMm : paperWidthMm
-  // A roll page shorter than its width is treated as landscape by print dialogs.
-  const paperHeightMm = isA4 ? a4HeightMm : Math.ceil(Math.max(imageHeightMm + 2.5, printPaperWidthMm + 1))
+  // Keep roll length close to the image; the selected driver form controls actual feed and cutting.
+  const paperHeightMm = isA4 ? a4HeightMm : Math.max(1, Math.ceil(imageHeightMm + 2.5))
   const columns = Math.floor((a4WidthMm - 2 * a4PaddingMm + a4GapMm) / (imageWidthsMm.a4 + a4GapMm))
   const rows = imageHeightMm > 0
     ? Math.min(a4MaxRows, Math.max(0, Math.floor((a4HeightMm - 2 * a4PaddingMm - 0.5 + a4GapMm) / (imageHeightMm + a4GapMm))))
@@ -98,7 +98,7 @@ export default function App() {
       <header className="app-header">
         <div className="header-inner">
           <img className="header-logo" src={greenLogo} alt="La Tijera" />
-          <h1>Impresión de tickets</h1>
+          <h1>Impresión de tickets que superen los $45mil</h1>
         </div>
       </header>
 
@@ -148,7 +148,11 @@ export default function App() {
               >
                 {isA4 ? (
                   <div className="a4-grid" style={{ gridTemplateColumns: `repeat(${columns}, ${imageWidthsMm.a4}mm)`, gap: `${a4GapMm}mm` }}>
-                    {Array.from({ length: copies }, (_, index) => <TicketImage widthMm={imageWidthsMm.a4} key={index} />)}
+                    {Array.from({ length: copies }, (_, index) => (
+                      <div className="a4-ticket" key={index}>
+                        <TicketImage widthMm={imageWidthsMm.a4} />
+                      </div>
+                    ))}
                   </div>
                 ) : <TicketImage widthMm={imageWidthMm} />}
               </div>
